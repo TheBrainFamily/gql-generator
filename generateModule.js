@@ -1,6 +1,8 @@
 #!/usr/bin/env node
 const finder = require('find-package-json');
 const shelljs = require('shelljs');
+const { Source, buildSchema } = require('graphql');
+const fs = require('fs');
 
 const getModuleInfos = require('./parsegraphql/getModuleInfos');
 const getModuleNames = require('./parsegraphql/getModuleNames');
@@ -102,8 +104,8 @@ modules.forEach((module) => {
     shelljs.mkdir('-p', `${projectMainPath}/src/modules/${moduleName}/graphql/mutations`);
     module.mutations.forEach(({ name, hasArguments, variables }) => {
       createMutation(name, hasArguments);
-      createUseCase(`mutation${name}`, hasArguments, variables, );
-      createUseCaseSpec(`mutation${name}`, hasArguments, variables,);
+      createUseCase(`mutation${name}`, hasArguments, variables);
+      createUseCaseSpec(`mutation${name}`, hasArguments, variables);
       // createMutationSpec(name);
     });
   }
@@ -169,8 +171,16 @@ createGetModuleNameContexts();
 // typeResolvers.handlebars
 
 const createTypeResolvers = () => {
-  modules.forEach(({ name, typeDefinitions, types }) => {
+  modules.forEach(({ name, typeDefinitions, types, schemaString }) => {
     if (types) {
+      // XXX TODO read this from the CLI
+      const typeDef = fs.readFileSync('./schema.graphql');
+
+      const source = new Source(typeDef);
+      let schema = buildSchema(source);
+      // const schema = importSchema(schemaPath, {}, { out: "GraphQLSchema" });
+      const typeMap = schema.getTypeMap();
+
       shelljs.mkdir('-p', `${projectMainPath}/src/modules/${name}/graphql/types/`);
       const templateName = './templates/typeResolvers.handlebars';
       const context = { type: typeDefinitions };
@@ -180,13 +190,34 @@ const createTypeResolvers = () => {
 
       saveRenderedTemplate(templateName, context, filePath, fileName, keepIfExists);
       typeDefinitions.forEach((typeDef) => {
-        const templateName = './templates/typeTypeResolvers.handlebars';
-        const context = { typeName: typeDef.name };
-        const filePath = `${projectMainPath}/src/modules/${name}/graphql/types/`;
-        const fileName = `${typeDef.name}TypeResolvers.ts`;
-        const keepIfExists = true;
+        let filtered = [];
+        const type = schema.getType(typeDef.name);
+        if (type.astNode) {
+          filtered = type.astNode.fields.filter(
+            (f) =>
+              !f.directives.find(
+                (d) =>
+                  d.name.value === 'column' ||
+                  d.name.value === 'id' ||
+                  d.name.value === 'embedded' ||
+                  d.name.value === 'link'
+              )
+          );
+        }
 
-        saveRenderedTemplate(templateName, context, filePath, fileName, keepIfExists);
+        if (filtered.length) {
+          shelljs.mkdir('-p', `${projectMainPath}/src/modules/${name}/graphql/types/${typeDef.name}`);
+        }
+        filtered.forEach(({name: {value}}) => {
+
+          const templateName = './templates/typeTypeResolvers.handlebars';
+          const context = { typeName: typeDef.name, fieldName: value, moduleName: name };
+          const filePath = `${projectMainPath}/src/modules/${name}/graphql/types/${typeDef.name}`;
+          const fileName = `${value}TypeResolvers.ts`;
+          const keepIfExists = true;
+
+          saveRenderedTemplate(templateName, context, filePath, fileName, keepIfExists);
+        })
       });
     }
   });

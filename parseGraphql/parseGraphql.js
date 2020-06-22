@@ -5,8 +5,6 @@ module.exports = (graphqlString) => {
   `;
   let foundQueries = graphqlAST.definitions.find((d) => d.name.value === 'Query');
   let foundMutations = graphqlAST.definitions.find((d) => d.name.value === 'Mutation');
-  console.dir(foundQueries, { depth: null });
-  console.dir(foundMutations, { depth: null });
   return {
     queries:
       foundQueries &&

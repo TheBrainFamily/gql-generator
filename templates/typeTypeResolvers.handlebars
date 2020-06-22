@@ -1,5 +1,6 @@
-import { {{typeName}}Resolvers } from "../../../../graphql/generated";
+import { {{typeName}}Resolvers } from "../../../../../graphql/generated";
 
 export const {{typeName}}TypeResolvers = {
-
+    {{fieldName}}: (parent, args, context) =>
+context.{{moduleName}}.{{typeName}}_{{fieldName}}(parent),
 } as {{typeName}}Resolvers;
