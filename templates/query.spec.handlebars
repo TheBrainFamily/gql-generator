@@ -1,10 +1,11 @@
-// import td from "testdouble";
+import td from "testdouble";
 
 import { getGqlClientWithMockedContext } from "../../../../graphql/testHelpers/getGqlClientWithMockedContext";
 
-test("{{queryName}} Query passes and gets the data from the module usecase", async () => {
+test.skip("{{queryName}} Query passes and gets the data from the module usecase", async () => {
 const { queries, context } = getGqlClientWithMockedContext();
 
-// td.when(context.{{moduleName}}.contextAction()).thenResolve();
+td.when(context.{{moduleName}}.query{{queryName}}()).thenResolve();
 const result = await queries.{{queryName}}();
+
 });

@@ -3,4 +3,6 @@
 {{#each modules}}import { I{{name}}Context } from "./modules/{{name}}/I{{name}}Context";
 {{/each}}
 
-export interface MyContext extends {{#each modules}}I{{name}}Context,{{/each}} {}
+export interface MyContext {
+{{#each modules}}{{name}}: I{{name}}Context;{{/each}}
+}

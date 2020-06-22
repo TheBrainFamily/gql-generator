@@ -1,0 +1,20 @@
+import td from "testdouble";
+{{#if hasArguments}}import { {{capitalizedName}}Args } from "../../../graphql/generated";{{/if}}
+import { {{moduleName}}Repository} from "../repository/{{moduleName}}Repository";
+import { {{name}} } from "./{{name}}";
+
+test("{{name}}", async () => {
+    const repository = td.object<{{moduleName}}Repository>();
+
+    const resolved: _REPLACE_ME_DbObject[] = [];
+    td.when(repository.findAll()).thenResolve(resolved);
+
+    {{#if hasArguments}}
+    const args: {{capitalizedName}}Args = {}
+    {{/if}}
+
+    const result = await {{name}}(repository)({{#if hasArguments}}args{{/if}});
+
+    expect(result).toEqual(resolved);
+});
+

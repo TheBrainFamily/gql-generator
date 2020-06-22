@@ -32,9 +32,9 @@ modules.forEach((module) => {
 
   createModuleResolvers();
 
-  const createQuery = (queryName) => {
+  const createQuery = (queryName, hasArguments) => {
     const templateName = './templates/query.handlebars';
-    const context = { queryName, moduleName };
+    const context = { queryName, moduleName, hasArguments };
     const filePath = `${projectMainPath}/src/modules/${moduleName}/graphql/queries/`;
     const fileName = `${queryName}Query.ts`;
     const keepIfExists = true;
@@ -50,17 +50,39 @@ modules.forEach((module) => {
     saveRenderedTemplate(templateName, context, filePath, fileName, keepIfExists);
   };
 
+  const createUseCase = (name, hasArguments, variables) => {
+    const templateName = './templates/useCase.handlebars';
+    const context = { name, moduleName, hasArguments, variables };
+    const filePath = `${projectMainPath}/src/modules/${moduleName}/useCases/`;
+    const fileName = `${name}.ts`;
+    const keepIfExists = true;
+    saveRenderedTemplate(templateName, context, filePath, fileName, keepIfExists);
+  };
+
+  const capitalize = (string) => string.charAt(0).toUpperCase() + string.slice(1);
+
+  const createUseCaseSpec = (name, hasArguments, variables) => {
+    const templateName = './templates/useCase.spec.handlebars';
+    const context = { name, moduleName, hasArguments, variables, capitalizedName: capitalize(name) };
+    const filePath = `${projectMainPath}/src/modules/${moduleName}/useCases/`;
+    const fileName = `${name}.spec.ts`;
+    const keepIfExists = true;
+    saveRenderedTemplate(templateName, context, filePath, fileName, keepIfExists);
+  };
+
   if (module.queries && module.queries.length) {
     shelljs.mkdir('-p', `${projectMainPath}/src/modules/${moduleName}/graphql/queries`);
-    module.queries.forEach(({ name }) => {
-      createQuery(name);
-      createQuerySpec(name);
+    module.queries.forEach(({ name, hasArguments, variables }) => {
+      createQuery(name, hasArguments);
+      createUseCase(`query${name}`, hasArguments, variables);
+      createUseCaseSpec(`query${name}`, hasArguments, variables);
+      // createQuerySpec(name);
     });
   }
 
-  const createMutation = (mutationName) => {
+  const createMutation = (mutationName, hasArguments) => {
     const templateName = './templates/mutation.handlebars';
-    const context = { mutationName, moduleName };
+    const context = { mutationName, moduleName, hasArguments };
     const filePath = `${projectMainPath}/src/modules/${moduleName}/graphql/mutations/`;
     const fileName = `${mutationName}Mutation.ts`;
     const keepIfExists = true;
@@ -78,9 +100,11 @@ modules.forEach((module) => {
 
   if (module.mutations && module.mutations.length) {
     shelljs.mkdir('-p', `${projectMainPath}/src/modules/${moduleName}/graphql/mutations`);
-    module.mutations.forEach(({ name }) => {
-      createMutation(name);
-      createMutationSpec(name);
+    module.mutations.forEach(({ name, hasArguments, variables }) => {
+      createMutation(name, hasArguments);
+      createUseCase(`mutation${name}`, hasArguments, variables, );
+      createUseCaseSpec(`mutation${name}`, hasArguments, variables,);
+      // createMutationSpec(name);
     });
   }
 });
@@ -144,7 +168,6 @@ const createGetModuleNameContexts = () => {
 createGetModuleNameContexts();
 // typeResolvers.handlebars
 
-
 const createTypeResolvers = () => {
   modules.forEach(({ name, typeDefinitions, types }) => {
     if (types) {
@@ -166,9 +189,7 @@ const createTypeResolvers = () => {
         saveRenderedTemplate(templateName, context, filePath, fileName, keepIfExists);
       });
     }
-
   });
 };
 
 createTypeResolvers();
-
