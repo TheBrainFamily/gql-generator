@@ -12,10 +12,11 @@ program
   .option('--destDirPath [value]', 'dir you want to store the generated queries')
   .option('--depthLimit [value]', 'query depth you want to limit(The default is 100)')
   .option('--typesPath [value]', 'path to your generated typescript file with GraphQL Types')
+  .option('--withMongo [value]', 'set as true if you are using @graphql-codegen/typescript-mongodb')
   .parse(process.argv);
 
 console.log();
-const { schemaFilePath, destDirPath, typesPath, depthLimit = 100 } = program;
+const { schemaFilePath, destDirPath, typesPath, depthLimit = 100, withMongo = false } = program;
 
 const pathToDestDir = `${process.cwd()}${destDirPath}`;
 const pathToTypes = `${process.cwd()}${typesPath}`;
@@ -75,12 +76,21 @@ const generateQuery = (
   let queryStr = '';
   let childQuery = '';
 
+  // const filtered = curType.toConfig().astNode.fields.filter(f => !f.directives.find(d => (d.name.value === "column" || d.name.value === "id" || d.name.value === "embedded" || d.name.value === "link")))
+
   if (curType.getFields) {
     const crossReferenceKey = `${curParentName}To${curName}Key`;
     if (crossReferenceKeyList.indexOf(crossReferenceKey) !== -1 || curDepth > depthLimit) return '';
     crossReferenceKeyList.push(crossReferenceKey);
     const childKeys = Object.keys(curType.getFields());
     childQuery = childKeys
+      .filter(k => {
+        if (withMongo) {
+          return curType.getFields()[k].astNode.directives.find(d => (d.name.value === "column" || d.name.value === "id" || d.name.value === "embedded" || d.name.value === "link"));
+        } else {
+          return true;
+        }
+      })
       .map((cur) => generateQuery(cur, curType, curName, argumentList, crossReferenceKeyList, curDepth + 1).queryStr)
       .filter((cur) => cur)
       .join('\n');
