@@ -1,7 +1,4 @@
 import { QueryResolvers } from "../../../../graphql/generated";
 
-export const {{queryName}}Query: QueryResolvers = {
-    {{queryName}}: (parent, args, context) => {
-    return context.{{moduleName}}.query{{queryName}}({{#if hasArguments}}args{{/if}})
-},
-};
+export const {{queryName}}Query: QueryResolvers["{{queryName}}"] = (parent, args, context) => { throw new Error("not implemented yet"); }
+

@@ -1,11 +1,22 @@
 import td from "testdouble";
+{{#if hasArguments}}import { Query{{queryName}}Args } from "../../../../graphql/generated";{{/if}}
+import { {{queryName}}Query } from "./{{queryName}}Query";
+import {MyContext} from "../../../../types";
 
-import { getGqlClientWithMockedContext } from "../../../../graphql/testHelpers/getGqlClientWithMockedContext";
 
-test.skip("{{queryName}} Query passes and gets the data from the module usecase", async () => {
-const { queries, context } = getGqlClientWithMockedContext();
+const test{{queryName}} = ({{#if hasArguments}}variables: Query{{queryName}}Args,{{/if}} context: MyContext) => {{queryName}}Query({}, {{#if hasArguments}}variables{{else}} {} {{/if}}, context, null)
 
-td.when(context.{{moduleName}}.query{{queryName}}()).thenResolve();
-const result = await queries.{{queryName}}();
+
+test("{{queryName}}", async () => {
+
+    const context = td.object<MyContext>();
+
+    // td.when(context.{{moduleName}}Repository.findOne()).thenResolve()
+
+    {{#if hasArguments}}
+        const variables: Query{{queryName}}Args = {}
+    {{/if}}
+
+    const result = await test{{queryName}}({{#if hasArguments}}variables,{{/if}} context);
 
 });

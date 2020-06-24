@@ -1,10 +1,21 @@
-// import td from "testdouble";
+import td from "testdouble";
+{{#if hasArguments}}import { Mutation{{mutationName}}Args } from "../../../../graphql/generated";{{/if}}
+import { {{mutationName}}Mutation } from "./{{mutationName}}Mutation";
+import {MyContext} from "../../../../types";
 
-import { getGqlClientWithMockedContext } from "../../../../graphql/testHelpers/getGqlClientWithMockedContext";
+const test{{mutationName}} = ({{#if hasArguments}}variables: Mutation{{mutationName}}Args, {{/if}}context: MyContext) => {{mutationName}}Mutation({}, {{#if hasArguments}}variables{{else}}  {} {{/if}}, context, null)
 
-test.skip("{{mutationName}} Mutation passes and gets the data from the module usecase", async () => {
-const { mutations, context } = getGqlClientWithMockedContext();
 
-// td.when(context.{{moduleName}}.mutate{{mutationName}}()).thenResolve();
-const result = await mutations.{{mutationName}}();
-});
+test("{{mutationName}}", async () => {
+
+const context = td.object<MyContext>();
+
+    // td.when(context.{{moduleName}}Repository.findOne()).thenResolve()
+
+    {{#if hasArguments}}
+        const variables: Mutation{{mutationName}}Args = {}
+    {{/if}}
+
+    const result = await test{{mutationName}}({{#if hasArguments}}variables,{{/if}} context);
+
+    });

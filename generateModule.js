@@ -10,6 +10,8 @@ const checkIfGitStateClean = require('./helpers/checkIfGitStateClean');
 const saveRenderedTemplate = require('./helpers/saveRenderedTemplate');
 checkIfGitStateClean();
 
+const capitalize = (string) => string.charAt(0).toUpperCase() + string.slice(1);
+
 const f = finder(process.cwd());
 const projectMainPath = f
   .next()
@@ -24,15 +26,6 @@ const modules = getModuleInfos(moduleNames);
 
 modules.forEach((module) => {
   const moduleName = module.name;
-  const createModuleResolvers = () => {
-    const templateName = './templates/moduleResolvers.handlebars';
-    const context = { ...module, moduleName: module.name };
-    const filePath = `${projectMainPath}/src/modules/${moduleName}/graphql/`;
-    const fileName = `${moduleName}Resolvers.ts`;
-    saveRenderedTemplate(templateName, context, filePath, fileName);
-  };
-
-  createModuleResolvers();
 
   const createQuery = (queryName, hasArguments) => {
     const templateName = './templates/query.handlebars';
@@ -43,31 +36,11 @@ modules.forEach((module) => {
     saveRenderedTemplate(templateName, context, filePath, fileName, keepIfExists);
   };
 
-  const createQuerySpec = (queryName) => {
+  const createQuerySpec = (queryName, hasArguments) => {
     const templateName = './templates/query.spec.handlebars';
-    const context = { queryName, moduleName };
+    const context = { queryName, moduleName, hasArguments };
     const filePath = `${projectMainPath}/src/modules/${moduleName}/graphql/queries/`;
     const fileName = `${queryName}Query.spec.ts`;
-    const keepIfExists = true;
-    saveRenderedTemplate(templateName, context, filePath, fileName, keepIfExists);
-  };
-
-  const createUseCase = (name, hasArguments, variables) => {
-    const templateName = './templates/useCase.handlebars';
-    const context = { name, moduleName, hasArguments, variables };
-    const filePath = `${projectMainPath}/src/modules/${moduleName}/useCases/`;
-    const fileName = `${name}.ts`;
-    const keepIfExists = true;
-    saveRenderedTemplate(templateName, context, filePath, fileName, keepIfExists);
-  };
-
-  const capitalize = (string) => string.charAt(0).toUpperCase() + string.slice(1);
-
-  const createUseCaseSpec = (name, hasArguments, variables) => {
-    const templateName = './templates/useCase.spec.handlebars';
-    const context = { name, moduleName, hasArguments, variables, capitalizedName: capitalize(name) };
-    const filePath = `${projectMainPath}/src/modules/${moduleName}/useCases/`;
-    const fileName = `${name}.spec.ts`;
     const keepIfExists = true;
     saveRenderedTemplate(templateName, context, filePath, fileName, keepIfExists);
   };
@@ -76,9 +49,7 @@ modules.forEach((module) => {
     shelljs.mkdir('-p', `${projectMainPath}/src/modules/${moduleName}/graphql/queries`);
     module.queries.forEach(({ name, hasArguments, variables }) => {
       createQuery(name, hasArguments);
-      createUseCase(`query${name}`, hasArguments, variables);
-      createUseCaseSpec(`query${name}`, hasArguments, variables);
-      // createQuerySpec(name);
+      createQuerySpec(name, hasArguments);
     });
   }
 
@@ -91,9 +62,9 @@ modules.forEach((module) => {
     saveRenderedTemplate(templateName, context, filePath, fileName, keepIfExists);
   };
 
-  const createMutationSpec = (mutationName) => {
+  const createMutationSpec = (mutationName, hasArguments) => {
     const templateName = './templates/mutation.spec.handlebars';
-    const context = { mutationName, moduleName };
+    const context = { mutationName, moduleName, hasArguments };
     const filePath = `${projectMainPath}/src/modules/${moduleName}/graphql/mutations/`;
     const fileName = `${mutationName}Mutation.spec.ts`;
     const keepIfExists = true;
@@ -104,9 +75,7 @@ modules.forEach((module) => {
     shelljs.mkdir('-p', `${projectMainPath}/src/modules/${moduleName}/graphql/mutations`);
     module.mutations.forEach(({ name, hasArguments, variables }) => {
       createMutation(name, hasArguments);
-      createUseCase(`mutation${name}`, hasArguments, variables);
-      createUseCaseSpec(`mutation${name}`, hasArguments, variables);
-      // createMutationSpec(name);
+      createMutationSpec(name, hasArguments);
     });
   }
 });
@@ -126,7 +95,9 @@ const createTypes = () => {
   const context = { modules };
   const filePath = `${projectMainPath}/src/`;
   const fileName = `types.ts`;
-  saveRenderedTemplate(templateName, context, filePath, fileName);
+  const keepIfExists = true;
+
+  saveRenderedTemplate(templateName, context, filePath, fileName, keepIfExists);
 };
 
 createTypes();
@@ -136,59 +107,24 @@ const createStartupConfig = () => {
   const context = { modules };
   const filePath = `${projectMainPath}/src/`;
   const fileName = `startupConfig.ts`;
-  saveRenderedTemplate(templateName, context, filePath, fileName);
+  const keepIfExists = true;
+
+  saveRenderedTemplate(templateName, context, filePath, fileName, keepIfExists);
 };
 
 createStartupConfig();
 
-const createIModuleNameContexts = () => {
-  modules.forEach(({ name }) => {
-    const templateName = './templates/IModuleNameContext.handlebars';
-    const context = { moduleName: name };
-    const filePath = `${projectMainPath}/src/modules/${name}/`;
-    const fileName = `I${name}Context.ts`;
-    const keepIfExists = true;
-
-    saveRenderedTemplate(templateName, context, filePath, fileName, keepIfExists);
-  });
-};
-
-createIModuleNameContexts();
-
-const createGetModuleNameContexts = () => {
-  modules.forEach(({ name }) => {
-    const templateName = './templates/getModuleNameContext.handlebars';
-    const context = { moduleName: name };
-    const filePath = `${projectMainPath}/src/modules/${name}/`;
-    const fileName = `get${name}Context.ts`;
-    const keepIfExists = true;
-
-    saveRenderedTemplate(templateName, context, filePath, fileName, keepIfExists);
-  });
-};
-
-createGetModuleNameContexts();
-// typeResolvers.handlebars
-
 const createTypeResolvers = () => {
-  modules.forEach(({ name, typeDefinitions, types, schemaString }) => {
+  modules.forEach(({ name, typeDefinitions, types, schemaString, queries, mutations }) => {
+    let typeResolvers = [];
     if (types) {
       // XXX TODO read this from the CLI
       const typeDef = fs.readFileSync('./schema.graphql');
 
       const source = new Source(typeDef);
       let schema = buildSchema(source);
-      // const schema = importSchema(schemaPath, {}, { out: "GraphQLSchema" });
-      const typeMap = schema.getTypeMap();
 
       shelljs.mkdir('-p', `${projectMainPath}/src/modules/${name}/graphql/types/`);
-      const templateName = './templates/typeResolvers.handlebars';
-      const context = { type: typeDefinitions };
-      const filePath = `${projectMainPath}/src/modules/${name}/graphql/types/`;
-      const fileName = `typeResolvers.ts`;
-      const keepIfExists = false;
-
-      saveRenderedTemplate(templateName, context, filePath, fileName, keepIfExists);
       typeDefinitions.forEach((typeDef) => {
         let filtered = [];
         const type = schema.getType(typeDef.name);
@@ -205,21 +141,58 @@ const createTypeResolvers = () => {
           );
         }
 
-        if (filtered.length) {
-          shelljs.mkdir('-p', `${projectMainPath}/src/modules/${name}/graphql/types/${typeDef.name}`);
-        }
-        filtered.forEach(({name: {value}}) => {
 
+        filtered.forEach(({ name: { value } }) => {
           const templateName = './templates/typeTypeResolvers.handlebars';
-          const context = { typeName: typeDef.name, fieldName: value, moduleName: name };
-          const filePath = `${projectMainPath}/src/modules/${name}/graphql/types/${typeDef.name}`;
-          const fileName = `${value}TypeResolvers.ts`;
+          let capitalizedFieldName = capitalize(value);
+          const context = {
+            typeName: typeDef.name,
+            fieldName: value,
+            moduleName: name,
+            capitalizedFieldName,
+          };
+          const filePath = `${projectMainPath}/src/modules/${name}/graphql/types/`;
+          const fileName = `${typeDef.name}${capitalizedFieldName}.ts`;
           const keepIfExists = true;
 
           saveRenderedTemplate(templateName, context, filePath, fileName, keepIfExists);
-        })
+        });
+
+        filtered.forEach(({ name: { value }, arguments }) => {
+          const templateName = './templates/typeTypeResolvers.spec.handlebars';
+          let capitalizedFieldName = capitalize(value);
+          const context = {
+            typeName: typeDef.name,
+            fieldName: value,
+            moduleName: name,
+            hasArguments: arguments && arguments.length,
+            capitalizedFieldName,
+          };
+          const filePath = `${projectMainPath}/src/modules/${name}/graphql/types/`;
+          const fileName = `${typeDef.name}${capitalizedFieldName}.spec.ts`;
+          const keepIfExists = true;
+
+          saveRenderedTemplate(templateName, context, filePath, fileName, keepIfExists);
+        });
+
+        if (filtered.length) {
+          typeResolvers.push({
+            typeName: typeDef.name,
+            fieldName: filtered.map(({ name: { value } }) => ({ name: value, capitalizedName: capitalize(value) })),
+          });
+        }
       });
     }
+    const moduleName = name;
+    const createModuleResolvers = () => {
+      const templateName = './templates/moduleResolvers.handlebars';
+      const context = { moduleName, queries, mutations, typeResolvers };
+      const filePath = `${projectMainPath}/src/modules/${moduleName}/graphql/`;
+      const fileName = `${moduleName}Resolvers.ts`;
+      saveRenderedTemplate(templateName, context, filePath, fileName);
+    };
+
+    createModuleResolvers();
   });
 };
 
