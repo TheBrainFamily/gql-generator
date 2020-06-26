@@ -118,16 +118,19 @@ const createTypeResolvers = () => {
   modules.forEach(({ name, typeDefinitions, types, schemaString, queries, mutations }) => {
     let typeResolvers = [];
     if (types) {
-      // XXX TODO read this from the CLI
-      const typeDef = fs.readFileSync('./schema.graphql');
-
-      const source = new Source(typeDef);
+      let source = new Source(schemaString);
       let schema = buildSchema(source);
 
       shelljs.mkdir('-p', `${projectMainPath}/src/modules/${name}/graphql/types/`);
       typeDefinitions.forEach((typeDef) => {
         let filtered = [];
-        const type = schema.getType(typeDef.name);
+        let type = schema.getType(typeDef.name);
+        if (!type) {
+          const newSchemaString = schemaString.replace(`extend type ${typeDef.name}`, `type ${typeDef.name}`)
+          let source = new Source(newSchemaString);
+          let schema = buildSchema(source);
+          type = schema.getType(typeDef.name);
+        }
         if (type.astNode) {
           filtered = type.astNode.fields.filter(
             (f) =>
