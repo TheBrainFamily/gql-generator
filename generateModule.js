@@ -138,8 +138,7 @@ const createTypeResolvers = () => {
                 (d) =>
                   d.name.value === 'column' ||
                   d.name.value === 'id' ||
-                  d.name.value === 'embedded' ||
-                  d.name.value === 'link'
+                  d.name.value === 'embedded'
               )
           );
         }
