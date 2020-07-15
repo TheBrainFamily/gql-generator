@@ -118,9 +118,9 @@ const createTypeResolvers = () => {
   modules.forEach(({ name, typeDefinitions, types, schemaString, queries, mutations }) => {
     let typeResolvers = [];
     if (types) {
+      schemaString = schemaString.replace(/extend type/g, `type`)
       let source = new Source(schemaString);
       let schema = buildSchema(source);
-
       shelljs.mkdir('-p', `${projectMainPath}/src/modules/${name}/graphql/types/`);
       typeDefinitions.forEach((typeDef) => {
         let filtered = [];
@@ -138,7 +138,8 @@ const createTypeResolvers = () => {
                 (d) =>
                   d.name.value === 'column' ||
                   d.name.value === 'id' ||
-                  d.name.value === 'embedded'
+                  d.name.value === 'embedded' ||
+                  d.name.value === 'external'
               )
           );
         }
