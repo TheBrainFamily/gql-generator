@@ -90,29 +90,28 @@ const createGlobalResolvers = () => {
 
 createGlobalResolvers();
 
-const createTypes = () => {
-  const templateName = './templates/types.handlebars';
-  const context = { modules };
+
+const createRoot = () => {
+  const templateName = './templates/root.handlebars';
   const filePath = `${projectMainPath}/src/`;
-  const fileName = `types.ts`;
+  const fileName = `root.ts`;
   const keepIfExists = true;
 
-  saveRenderedTemplate(templateName, context, filePath, fileName, keepIfExists);
+  saveRenderedTemplate(templateName, {}, filePath, fileName, keepIfExists);
 };
 
-createTypes();
+createRoot();
 
-const createStartupConfig = () => {
-  const templateName = './templates/startupConfig.handlebars';
-  const context = { modules };
+const createContext = () => {
+  const templateName = './templates/context.handlebars';
   const filePath = `${projectMainPath}/src/`;
-  const fileName = `startupConfig.ts`;
+  const fileName = `context.ts`;
   const keepIfExists = true;
 
-  saveRenderedTemplate(templateName, context, filePath, fileName, keepIfExists);
+  saveRenderedTemplate(templateName, {}, filePath, fileName, keepIfExists);
 };
 
-createStartupConfig();
+createContext();
 
 const createTypeResolvers = () => {
   modules.forEach(({ name, typeDefinitions, types, schemaString, queries, mutations }) => {

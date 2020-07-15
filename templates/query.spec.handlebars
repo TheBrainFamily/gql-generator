@@ -1,15 +1,15 @@
 import td from "testdouble";
 {{#if hasArguments}}import { Query{{queryName}}Args } from "../../../../graphql/generated";{{/if}}
 import { {{queryName}}Query } from "./{{queryName}}Query";
-import {MyContext} from "../../../../types";
+import { GqlContext } from "../../../../context";
 
 
-const test{{queryName}} = ({{#if hasArguments}}variables: Query{{queryName}}Args,{{/if}} context: MyContext) => {{queryName}}Query({}, {{#if hasArguments}}variables{{else}} {} {{/if}}, context, null)
+const test{{queryName}} = ({{#if hasArguments}}variables: Query{{queryName}}Args,{{/if}} context: GqlContext) => {{queryName}}Query({}, {{#if hasArguments}}variables{{else}} {} {{/if}}, context, null)
 
 
 test("{{queryName}}", async () => {
 
-    const context = td.object<MyContext>();
+    const context = td.object<GqlContext>();
 
     // td.when(context.{{moduleName}}Repository.findOne()).thenResolve()
 

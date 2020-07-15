@@ -1,14 +1,14 @@
 import td from "testdouble";
 {{#if hasArguments}}import { Mutation{{mutationName}}Args } from "../../../../graphql/generated";{{/if}}
 import { {{mutationName}}Mutation } from "./{{mutationName}}Mutation";
-import {MyContext} from "../../../../types";
+import { GqlContext } from "../../../../context";
 
-const test{{mutationName}} = ({{#if hasArguments}}variables: Mutation{{mutationName}}Args, {{/if}}context: MyContext) => {{mutationName}}Mutation({}, {{#if hasArguments}}variables{{else}}  {} {{/if}}, context, null)
+const test{{mutationName}} = ({{#if hasArguments}}variables: Mutation{{mutationName}}Args, {{/if}}context: GqlContext) => {{mutationName}}Mutation({}, {{#if hasArguments}}variables{{else}}  {} {{/if}}, context, null)
 
 
 test("{{mutationName}}", async () => {
 
-const context = td.object<MyContext>();
+const context = td.object<GqlContext>();
 
     // td.when(context.{{moduleName}}Repository.findOne()).thenResolve()
 

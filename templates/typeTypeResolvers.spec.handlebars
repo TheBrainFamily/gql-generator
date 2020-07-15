@@ -2,15 +2,15 @@ import td from "testdouble";
 
 import { ResolversParentTypes, {{#if hasArguments}}{{typeName}}{{capitalizedFieldName}}Args{{/if}} } from "../../../../graphql/generated";
 import { {{typeName}}{{capitalizedFieldName}} } from "./{{typeName}}{{capitalizedFieldName}}";
-import {MyContext} from "../../../../types";
+import {GqlContext} from "../../../../types";
 
 
-const test{{typeName}}{{capitalizedFieldName}} = (parent: ResolversParentTypes["{{typeName}}"], {{#if hasArguments}}variables: {{typeName}}{{capitalizedFieldName}}Args,{{/if}} context: MyContext) => {{typeName}}{{capitalizedFieldName}}(parent, {{#if hasArguments}}variables{{else}} {} {{/if}}, context, null)
+const test{{typeName}}{{capitalizedFieldName}} = (parent: ResolversParentTypes["{{typeName}}"], {{#if hasArguments}}variables: {{typeName}}{{capitalizedFieldName}}Args,{{/if}} context: GqlContext) => {{typeName}}{{capitalizedFieldName}}(parent, {{#if hasArguments}}variables{{else}} {} {{/if}}, context, null)
 
 
 test("{{typeName}}{{capitalizedFieldName}}", async () => {
 
-const context = td.object<MyContext>();
+const context = td.object<GqlContext>();
 
     // td.when(context.{{moduleName}}Repository.findOne()).thenResolve()
 

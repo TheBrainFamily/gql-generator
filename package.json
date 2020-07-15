@@ -1,6 +1,6 @@
 {
   "name": "gql-typescript-generator",
-  "version": "9.0.0",
+  "version": "9.0.0-preview",
   "description": "",
   "main": "index.js",
   "bin": {
