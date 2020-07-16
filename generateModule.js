@@ -6,6 +6,7 @@ const fs = require('fs');
 
 const getModuleInfos = require('./parsegraphql/getModuleInfos');
 const getModuleNames = require('./parsegraphql/getModuleNames');
+const getFederatedEntities = require('./parsegraphql/getFederatedEntities');
 const checkIfGitStateClean = require('./helpers/checkIfGitStateClean');
 const saveRenderedTemplate = require('./helpers/saveRenderedTemplate');
 checkIfGitStateClean();
@@ -90,7 +91,6 @@ const createGlobalResolvers = () => {
 
 createGlobalResolvers();
 
-
 const createRoot = () => {
   const templateName = './templates/root.handlebars';
   const filePath = `${projectMainPath}/src/`;
@@ -117,7 +117,8 @@ const createTypeResolvers = () => {
   modules.forEach(({ name, typeDefinitions, types, schemaString, queries, mutations }) => {
     let typeResolvers = [];
     if (types) {
-      schemaString = schemaString.replace(/extend type/g, `type`)
+      const federatedEntities = getFederatedEntities(schemaString);
+      schemaString = schemaString.replace(/extend type/g, `type`);
       let source = new Source(schemaString);
       let schema = buildSchema(source);
       shelljs.mkdir('-p', `${projectMainPath}/src/modules/${name}/graphql/types/`);
@@ -125,32 +126,40 @@ const createTypeResolvers = () => {
         let filtered = [];
         let type = schema.getType(typeDef.name);
         if (!type) {
-          const newSchemaString = schemaString.replace(`extend type ${typeDef.name}`, `type ${typeDef.name}`)
+          const newSchemaString = schemaString.replace(`extend type ${typeDef.name}`, `type ${typeDef.name}`);
           let source = new Source(newSchemaString);
           let schema = buildSchema(source);
           type = schema.getType(typeDef.name);
         }
         if (type.astNode) {
-          filtered = type.astNode.fields.filter(
-            (f) =>
-              !f.directives.find(
-                (d) =>
-                  d.name.value === 'column' ||
-                  d.name.value === 'id' ||
-                  d.name.value === 'embedded' ||
-                  d.name.value === 'external'
-              )
-          );
+          if (type.astNode.directives && !!type.astNode.directives.find((d) => d.name.value === 'entity')) {
+            filtered = type.astNode.fields.filter(
+              (f) =>
+                !f.directives.find(
+                  (d) =>
+                    d.name.value === 'column' ||
+                    d.name.value === 'id' ||
+                    d.name.value === 'embedded' ||
+                    d.name.value === 'external'
+                )
+            );
+          } else {
+            filtered = type.astNode.fields.filter((f) => f.directives.find((d) => d.name.value === 'computed'));
+          }
         }
 
+        if (federatedEntities.find((e) => e === typeDef.name)) {
+          filtered = filtered.concat(federatedEntities.map((e) => ({ name: { value: '__resolveReference' }, resolveReferenceType: true })));
+        }
 
-        filtered.forEach(({ name: { value } }) => {
+        filtered.forEach(({ name: { value }, resolveReferenceType }) => {
           const templateName = './templates/typeTypeResolvers.handlebars';
           let capitalizedFieldName = capitalize(value);
           const context = {
             typeName: typeDef.name,
             fieldName: value,
             moduleName: name,
+            resolveReferenceType,
             capitalizedFieldName,
           };
           const filePath = `${projectMainPath}/src/modules/${name}/graphql/types/`;
@@ -160,7 +169,7 @@ const createTypeResolvers = () => {
           saveRenderedTemplate(templateName, context, filePath, fileName, keepIfExists);
         });
 
-        filtered.forEach(({ name: { value }, arguments }) => {
+        filtered.forEach(({ name: { value }, arguments, resolveReferenceType }) => {
           const templateName = './templates/typeTypeResolvers.spec.handlebars';
           let capitalizedFieldName = capitalize(value);
           const context = {
@@ -168,6 +177,7 @@ const createTypeResolvers = () => {
             fieldName: value,
             moduleName: name,
             hasArguments: arguments && arguments.length,
+            resolveReferenceType,
             capitalizedFieldName,
           };
           const filePath = `${projectMainPath}/src/modules/${name}/graphql/types/`;
