@@ -2,7 +2,6 @@
 const finder = require('find-package-json');
 const shelljs = require('shelljs');
 const { Source, buildSchema } = require('graphql');
-const fs = require('fs');
 
 const getModuleInfos = require('./parsegraphql/getModuleInfos');
 const getModuleNames = require('./parsegraphql/getModuleNames');
@@ -21,6 +20,55 @@ const projectMainPath = f
   .join('/');
 
 const graphqlPaths = shelljs.ls(`${projectMainPath}/src/modules/*/graphql/*.graphql`).map((p) => ({ name: p }));
+
+shelljs.mkdir('-p', `${projectMainPath}/generated/graphql`);
+
+// "Framework" "generated" files - initial generation
+const createCombineSchemas = () => {
+  const templateName = './templates/combineSchemas.ts';
+  const filePath = `${projectMainPath}/generated/graphql/`;
+  const fileName = `combineSchemas.ts`;
+
+  saveRenderedTemplate(templateName, {}, filePath, fileName);
+};
+
+createCombineSchemas();
+
+const createPrintSchema = () => {
+  const templateName = './templates/printSchema.ts';
+  const filePath = `${projectMainPath}/generated/graphql/`;
+  const fileName = `printSchema.ts`;
+
+  saveRenderedTemplate(templateName, {}, filePath, fileName);
+}
+
+createPrintSchema();
+
+const createGenericDataModelSchema = () => {
+  const templateName = './templates/genericDataModelSchema.graphql';
+  const filePath = `${projectMainPath}/generated/graphql/`;
+  const fileName = `genericDataModelSchema.graphql`;
+
+  saveRenderedTemplate(templateName, {}, filePath, fileName);
+}
+
+createGenericDataModelSchema();
+
+const createFrameworkSchema = () => {
+  const templateName = './templates/frameworkSchema.graphql';
+  const filePath = `${projectMainPath}/generated/graphql/`;
+  const fileName = `frameworkSchema.graphql`;
+
+  saveRenderedTemplate(templateName, {}, filePath, fileName);
+}
+
+createFrameworkSchema();
+
+// End of "Framework" "generated" files
+
+// Initial App Setup files
+
+//
 
 const moduleNames = getModuleNames(graphqlPaths);
 const modules = getModuleInfos(moduleNames);
@@ -84,7 +132,7 @@ modules.forEach((module) => {
 const createGlobalResolvers = () => {
   const templateName = './templates/resolvers.handlebars';
   const context = { modules };
-  const filePath = `${projectMainPath}/src/graphql/`;
+  const filePath = `${projectMainPath}/generated/graphql/`;
   const fileName = `resolvers.ts`;
   saveRenderedTemplate(templateName, context, filePath, fileName);
 };
@@ -199,7 +247,7 @@ const createTypeResolvers = () => {
     const createModuleResolvers = () => {
       const templateName = './templates/moduleResolvers.handlebars';
       const context = { moduleName, queries, mutations, typeResolvers };
-      const filePath = `${projectMainPath}/src/modules/${moduleName}/graphql/`;
+      const filePath = `${projectMainPath}/generated/graphql/`;
       const fileName = `${moduleName}Resolvers.ts`;
       saveRenderedTemplate(templateName, context, filePath, fileName);
     };

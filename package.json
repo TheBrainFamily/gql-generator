@@ -1,13 +1,13 @@
 {
   "name": "gql-typescript-generator",
-  "version": "9.0.0-preview",
+  "version": "9.0.1-preview",
   "description": "",
   "main": "index.js",
   "bin": {
     "gqlg": "index.js"
   },
   "scripts": {
-    "test": "mocha -u qunit",
+    "test": "jest",
     "lint": "./node_modules/.bin/eslint ./index.js"
   },
   "repository": {
@@ -19,7 +19,7 @@
     "query",
     "generator"
   ],
-  "author": "timqian",
+  "author": "Lukasz Gandecki lukasz@xolv.io",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/TheBrainFamily/gql-typescript-generator/issues"
