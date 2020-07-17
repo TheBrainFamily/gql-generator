@@ -1,7 +1,6 @@
 import td from "testdouble";
-{{#if hasArguments}}import { Query{{queryName}}Args } from "../../../../graphql/generated";{{/if}}
+import { GqlContext, {{#if hasArguments}}Query{{queryName}}Args{{/if}} } from "@generated/graphql/types";
 import { {{queryName}}Query } from "./{{queryName}}Query";
-import { GqlContext } from "../../../../context";
 
 
 const test{{queryName}} = ({{#if hasArguments}}variables: Query{{queryName}}Args,{{/if}} context: GqlContext) => {{queryName}}Query({}, {{#if hasArguments}}variables{{else}} {} {{/if}}, context, null)

@@ -1,3 +1,4 @@
+import * as fs from "fs";
 import {  loadTypedefsSync } from "@graphql-tools/load";
 import {
   GraphQLFileLoader,
@@ -11,11 +12,13 @@ const graphqlPaths = shelljs.ls(
   `${__dirname}/../../src/modules/*/graphql/*.graphql`
 );
 
-const mainSchema = `${__dirname}/../../src/graphql/schema.graphql`;
-const allSchemas = graphqlPaths
-  .concat(mainSchema)
+let allSchemas = graphqlPaths
   .concat(`${__dirname}/genericDataModelSchema.graphql`)
-  .concat(`${__dirname}/frameworkSchema.graphql`);
+
+const schemaExtensionPath = `${__dirname}/../../src/graphql/schema.graphql`
+if (fs.existsSync(schemaExtensionPath)) {
+  allSchemas = allSchemas.concat(schemaExtensionPath)
+}
 
 class ExtendedGraphQLFileLoader extends GraphQLFileLoader {
   handleFileContent(
@@ -23,12 +26,6 @@ class ExtendedGraphQLFileLoader extends GraphQLFileLoader {
     pointer: string,
     options: GraphQLFileLoaderOptions
   ) {
-    if (pointer.indexOf("schema.graphql") > -1) {
-      const newSdl = rawSDL
-        .replace("type Query", "")
-        .replace("type Mutation", "");
-      return super.handleFileContent(newSdl, pointer, options);
-    }
     const newSdl = rawSDL
       .replace("extend type Query", "type Query")
       .replace("extend type Mutation", "type Mutation");

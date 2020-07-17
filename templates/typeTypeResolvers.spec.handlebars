@@ -1,8 +1,7 @@
 import td from "testdouble";
 
-{{#unless resolveReferenceType}}import { ResolversParentTypes, {{#if hasArguments}}{{typeName}}{{capitalizedFieldName}}Args{{/if}} } from "../../../../graphql/generated";{{/unless}}
+import { GqlContext, {{#if resolveReferenceType}}ResolversParentTypes, {{/if}} {{#if hasArguments}}{{typeName}}{{capitalizedFieldName}}Args{{/if}} } from "@generated/graphql/types";
 import { {{typeName}}{{capitalizedFieldName}} } from "./{{typeName}}{{capitalizedFieldName}}";
-import { GqlContext } from "../../../../context";
 
 {{#if resolveReferenceType}}type ParentType = Parameters<typeof {{typeName}}{{capitalizedFieldName}}>[0];{{/if}}
 
