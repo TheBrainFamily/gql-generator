@@ -1,21 +1,34 @@
 #!/usr/bin/env node
-// const path = require('path');
-// const program = require('commander');
-//
-// program
-//   .option('--postinstall [value]', 'path of your graphql schema file')
-//   .option('--destDirPath [value]', 'dir you want to store the generated queries')
-//   .option('--depthLimit [value]', 'query depth you want to limit(The default is 100)')
-//   .option('--typesPath [value]', 'path to your generated typescript file with GraphQL Types')
-//   .parse(process.argv);
-//
-// console.log();
-// const { schemaFilePath, destDirPath, typesPath, depthLimit = 100 } = program;
-//
-// const pathToDestDir = `${process.cwd()}${destDirPath}`;
-// const pathToTypes = `${process.cwd()}${typesPath}`;
-// const typesRelativePathWithExtension = path.relative(pathToDestDir, pathToTypes);
-// const typesRelativePath = typesRelativePathWithExtension.replace(path.extname(typesRelativePathWithExtension), '');
+const fs = require("fs");
+
+const program = require('commander');
+const shelljs = require('shelljs');
+
+program
+  .option('--create <name>', 'Create a new app - pass a name')
+  .option('--codeGen', 'Generate code')
+  .parse(process.argv);
+
+const { create, codeGen } = program;
+
+const scaffoldDir = `${process.cwd()}/${create}`;
+
+if (create) {
+  if (fs.existsSync(scaffoldDir)) {
+    console.log(`Path: ${scaffoldDir} already exists. Can't create a new app in an already existing path.`)
+    process.exit(1)
+  }
+  shelljs.cp('-R', `${__dirname}/scaffold`, `${scaffoldDir}`)
+  shelljs.exec(`cd ${create} && git init .`)
+  console.log(`\n${create} created successfully!`)
+  console.log(`run:
+   cd ${create}
+   npm install`)
+   console.log('and start hacking! :-)')
+  process.exit(1)
+}
 
 
-require('./generateModule');
+if (codeGen) {
+  require("./generateModule")
+}

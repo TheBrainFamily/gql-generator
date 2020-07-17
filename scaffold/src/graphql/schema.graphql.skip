@@ -1,0 +1,15 @@
+## If you need to add extra generic directives here, change this file name to schema.graphql.
+
+# some common examples of directives:
+
+#directive @adminOnly on OBJECT | FIELD_DEFINITION
+#directive @authorized(requires: [Roles]) on OBJECT | FIELD_DEFINITION
+
+#enum Roles {
+# ADMIN
+# REGISTERED_USER
+#}
+
+type Status {
+    status: String!
+}

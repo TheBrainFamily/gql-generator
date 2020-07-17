@@ -6,9 +6,8 @@ const { Source, buildSchema } = require('graphql');
 const getModuleInfos = require('./parsegraphql/getModuleInfos');
 const getModuleNames = require('./parsegraphql/getModuleNames');
 const getFederatedEntities = require('./parsegraphql/getFederatedEntities');
-const checkIfGitStateClean = require('./helpers/checkIfGitStateClean');
+// const checkIfGitStateClean = require('./helpers/checkIfGitStateClean');
 const saveRenderedTemplate = require('./helpers/saveRenderedTemplate');
-checkIfGitStateClean();
 
 const capitalize = (string) => string.charAt(0).toUpperCase() + string.slice(1);
 
