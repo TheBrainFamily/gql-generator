@@ -3,9 +3,9 @@ const finder = require('find-package-json');
 const shelljs = require('shelljs');
 const { Source, buildSchema } = require('graphql');
 
-const getModuleInfos = require('./parsegraphql/getModuleInfos');
-const getModuleNames = require('./parsegraphql/getModuleNames');
-const getFederatedEntities = require('./parsegraphql/getFederatedEntities');
+const getModuleInfos = require('./parse-graphql/getModuleInfos');
+const getModuleNames = require('./parse-graphql/getModuleNames');
+const getFederatedEntities = require('./parse-graphql/getFederatedEntities');
 // const checkIfGitStateClean = require('./helpers/checkIfGitStateClean');
 const saveRenderedTemplate = require('./helpers/saveRenderedTemplate');
 
