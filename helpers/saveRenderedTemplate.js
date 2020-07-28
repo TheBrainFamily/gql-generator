@@ -2,6 +2,10 @@ const fs = require('fs');
 const Handlebars = require('handlebars');
 const path = require('path');
 
+Handlebars.registerHelper('toUpperCase', function(str) {
+  return str.replace(/^\w/, c => c.toUpperCase());
+});
+
 module.exports = function saveRenderedTemplate (templateName, context, filePath, fileName, keepIfExists = false) {
   const combinedPath = path.join(filePath, fileName);
   if (keepIfExists && fs.existsSync(combinedPath)) {
