@@ -11,6 +11,6 @@ const exampleNames = [{ name: 'Accounts', graphqlFilePath: '/src/modules/Account
 test('', () => {
   const parsed = getModuleInfos(exampleNames)[0];
   expect(parsed.name).toEqual('Accounts');
-  expect(parsed.queries).toEqual([{ name: 'me' }]);
+  expect(parsed.queries).toMatchObject([{ name: 'me' }]);
   expect(parsed.types).toEqual(false);
 });

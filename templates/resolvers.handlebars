@@ -1,5 +1,5 @@
 import merge from "lodash/merge";
-{{#each modules}}import { {{name}}Resolvers } from "../modules/{{name}}/graphql/{{name}}Resolvers";{{/each}}
+{{#each modules}}import { {{name}}Resolvers } from "./{{name}}Resolvers";{{/each}}
 
 // This file is generated. If you want to add custom resolvers do following steps:
 // 1. create customResolvers.ts file
