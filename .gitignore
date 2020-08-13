@@ -64,3 +64,4 @@ typings/
 # webstorm settings
 .idea
 
+.DS_STORE
