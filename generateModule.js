@@ -138,6 +138,16 @@ const createGlobalResolvers = () => {
 
 createGlobalResolvers();
 
+const createGlobalSchema = () => {
+  const templateName = './templates/schema.ts';
+  const context = { modules };
+  const filePath = `${projectMainPath}/generated/graphql/`;
+  const fileName = `schema.ts`;
+  saveRenderedTemplate(templateName, context, filePath, fileName);
+};
+
+createGlobalSchema();
+
 const createRoot = () => {
   const templateName = './templates/root.handlebars';
   const filePath = `${projectMainPath}/src/`;

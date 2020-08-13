@@ -2,8 +2,9 @@ import { ApolloServer } from "apollo-server-express";
 import express from "express";
 import cookieParser from "cookie-parser";
 
+import { schema } from "@generated/graphql/schema";
+
 import { appContext } from "./context";
-import { schema } from "./graphql/schema";
 import { root } from "./root";
 
 // We are keeping async here because we want to be able to await operations without changing the API of createApp.
