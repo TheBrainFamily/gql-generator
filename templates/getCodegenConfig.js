@@ -37,7 +37,6 @@ for (const typeName in typeMap) {
   const type = schema.getType(typeName);
   if (isObjectType(type)) {
     if (type.toConfig().astNode) {
-      console.log("ast node", type.toConfig().astNode);
       if (
         !["Query", "Mutation", "Subscription"].includes(
           type.toConfig().astNode.name.value
