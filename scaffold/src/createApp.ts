@@ -17,9 +17,6 @@ export const createApp = async () => {
   // so if you need to block other domains, you have an example
   const whitelist = [
     "http://localhost:3000",
-    "http://localhost:4000",
-    "http://xolv.io",
-    "https://xolv.io",
   ];
 
   const corsOptions = {

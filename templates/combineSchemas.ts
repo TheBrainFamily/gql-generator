@@ -9,16 +9,12 @@ import { mergeTypeDefs } from "@graphql-tools/merge";
 import shelljs from "shelljs";
 
 const graphqlPaths = shelljs.ls(
-  `${__dirname}/../../src/modules/*/graphql/*.graphql`
+  `${__dirname}/../../src/**/*.graphql`
 );
 
 let allSchemas = graphqlPaths
   .concat(`${__dirname}/genericDataModelSchema.graphql`)
 
-const schemaExtensionPath = `${__dirname}/../../src/graphql/schema.graphql`
-if (fs.existsSync(schemaExtensionPath)) {
-  allSchemas = allSchemas.concat(schemaExtensionPath)
-}
 
 class ExtendedGraphQLFileLoader extends GraphQLFileLoader {
   handleFileContent(

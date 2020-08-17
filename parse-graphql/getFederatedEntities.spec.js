@@ -1,7 +1,7 @@
 const getExtendedTypes = require('./getFederatedEntities');
 const gql = (a) => a[0];
 
-test.only('get the non extended types with apollo key annotation', () => {
+test('get the non extended types with apollo key annotation', () => {
   const schemaString = gql`
     type TodoItem @key(fields: "id") {
       id: ID!

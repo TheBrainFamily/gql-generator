@@ -18,7 +18,6 @@ const projectMainPath = f
   .filter((c) => c.indexOf('package.json') == -1)
   .join('/');
 
-const graphqlPaths = shelljs.ls(`${projectMainPath}/src/modules/*/graphql/*.graphql`).map((p) => ({ name: p }));
 
 shelljs.mkdir('-p', `${projectMainPath}/generated/graphql`);
 
@@ -39,7 +38,7 @@ const createPrintSchema = () => {
   const fileName = `printSchema.ts`;
 
   saveRenderedTemplate(templateName, {}, filePath, fileName);
-}
+};
 
 createPrintSchema();
 
@@ -49,7 +48,7 @@ const createGenericDataModelSchema = () => {
   const fileName = `genericDataModelSchema.graphql`;
 
   saveRenderedTemplate(templateName, {}, filePath, fileName);
-}
+};
 
 createGenericDataModelSchema();
 
@@ -59,74 +58,27 @@ const createFrameworkSchema = () => {
   const fileName = `frameworkSchema.graphql`;
 
   saveRenderedTemplate(templateName, {}, filePath, fileName);
-}
+};
 
 createFrameworkSchema();
 
-// End of "Framework" "generated" files
+const createGetCodegenConfig = () => {
+  const templateName = './templates/getCodegenConfig.js';
+  const filePath = `${projectMainPath}/generated/graphql/`;
+  const fileName = `getCodegenConfig.js`;
 
-// Initial App Setup files
+  saveRenderedTemplate(templateName, {}, filePath, fileName);
+};
 
-//
+createGetCodegenConfig();
 
-const moduleNames = getModuleNames(graphqlPaths);
+
+const graphqlPaths = shelljs
+  .ls(`${projectMainPath}/src/**/*.graphql`)
+
+const moduleNames = getModuleNames(graphqlPaths, projectMainPath);
 const modules = getModuleInfos(moduleNames);
 
-modules.forEach((module) => {
-  const moduleName = module.name;
-
-  const createQuery = (queryName, hasArguments) => {
-    const templateName = './templates/query.handlebars';
-    const context = { queryName, moduleName, hasArguments };
-    const filePath = `${projectMainPath}/src/modules/${moduleName}/graphql/queries/`;
-    const fileName = `${queryName}Query.ts`;
-    const keepIfExists = true;
-    saveRenderedTemplate(templateName, context, filePath, fileName, keepIfExists);
-  };
-
-  const createQuerySpec = (queryName, hasArguments) => {
-    const templateName = './templates/query.spec.handlebars';
-    const context = { queryName, moduleName, hasArguments };
-    const filePath = `${projectMainPath}/src/modules/${moduleName}/graphql/queries/`;
-    const fileName = `${queryName}Query.spec.ts`;
-    const keepIfExists = true;
-    saveRenderedTemplate(templateName, context, filePath, fileName, keepIfExists);
-  };
-
-  if (module.queries && module.queries.length) {
-    shelljs.mkdir('-p', `${projectMainPath}/src/modules/${moduleName}/graphql/queries`);
-    module.queries.forEach(({ name, hasArguments, variables }) => {
-      createQuery(name, hasArguments);
-      createQuerySpec(name, hasArguments);
-    });
-  }
-
-  const createMutation = (mutationName, hasArguments) => {
-    const templateName = './templates/mutation.handlebars';
-    const context = { mutationName, moduleName, hasArguments };
-    const filePath = `${projectMainPath}/src/modules/${moduleName}/graphql/mutations/`;
-    const fileName = `${mutationName}Mutation.ts`;
-    const keepIfExists = true;
-    saveRenderedTemplate(templateName, context, filePath, fileName, keepIfExists);
-  };
-
-  const createMutationSpec = (mutationName, hasArguments) => {
-    const templateName = './templates/mutation.spec.handlebars';
-    const context = { mutationName, moduleName, hasArguments };
-    const filePath = `${projectMainPath}/src/modules/${moduleName}/graphql/mutations/`;
-    const fileName = `${mutationName}Mutation.spec.ts`;
-    const keepIfExists = true;
-    saveRenderedTemplate(templateName, context, filePath, fileName, keepIfExists);
-  };
-
-  if (module.mutations && module.mutations.length) {
-    shelljs.mkdir('-p', `${projectMainPath}/src/modules/${moduleName}/graphql/mutations`);
-    module.mutations.forEach(({ name, hasArguments, variables }) => {
-      createMutation(name, hasArguments);
-      createMutationSpec(name, hasArguments);
-    });
-  }
-});
 
 const createGlobalResolvers = () => {
   const templateName = './templates/resolvers.handlebars';
@@ -148,37 +100,78 @@ const createGlobalSchema = () => {
 
 createGlobalSchema();
 
-const createRoot = () => {
-  const templateName = './templates/root.handlebars';
-  const filePath = `${projectMainPath}/src/`;
-  const fileName = `root.ts`;
-  const keepIfExists = true;
+// End of "Framework" "generated" files
 
-  saveRenderedTemplate(templateName, {}, filePath, fileName, keepIfExists);
-};
+// Initial App Setup files
 
-createRoot();
+//
 
-const createContext = () => {
-  const templateName = './templates/context.handlebars';
-  const filePath = `${projectMainPath}/src/`;
-  const fileName = `context.ts`;
-  const keepIfExists = true;
+modules.forEach((module) => {
+  const moduleName = module.name;
+  const {graphqlFileRootPath} = module;
+  const createQuery = (queryName, hasArguments) => {
+    const templateName = './templates/query.handlebars';
+    const context = { queryName, moduleName, hasArguments };
+    const filePath = `${projectMainPath}/src/${graphqlFileRootPath}/queries/`;
+    const fileName = `${queryName}Query.ts`;
+    const keepIfExists = true;
+    saveRenderedTemplate(templateName, context, filePath, fileName, keepIfExists);
+  };
 
-  saveRenderedTemplate(templateName, {}, filePath, fileName, keepIfExists);
-};
+  const createQuerySpec = (queryName, hasArguments) => {
+    const templateName = './templates/query.spec.handlebars';
+    const context = { queryName, moduleName, hasArguments };
+    const filePath = `${projectMainPath}/src/${graphqlFileRootPath}/queries/`;
+    const fileName = `${queryName}Query.spec.ts`;
+    const keepIfExists = true;
+    saveRenderedTemplate(templateName, context, filePath, fileName, keepIfExists);
+  };
 
-createContext();
+  if (module.queries && module.queries.length) {
+    shelljs.mkdir('-p', `${projectMainPath}/src/${graphqlFileRootPath}/queries`);
+    module.queries.forEach(({ name, hasArguments, variables }) => {
+      createQuery(name, hasArguments);
+      createQuerySpec(name, hasArguments);
+    });
+  }
+
+  const createMutation = (mutationName, hasArguments) => {
+    const templateName = './templates/mutation.handlebars';
+    const context = { mutationName, moduleName, hasArguments };
+    const filePath = `${projectMainPath}/src/${graphqlFileRootPath}/mutations/`;
+    const fileName = `${mutationName}Mutation.ts`;
+    const keepIfExists = true;
+    saveRenderedTemplate(templateName, context, filePath, fileName, keepIfExists);
+  };
+
+  const createMutationSpec = (mutationName, hasArguments) => {
+    const templateName = './templates/mutation.spec.handlebars';
+    const context = { mutationName, moduleName, hasArguments };
+    const filePath = `${projectMainPath}/src/${graphqlFileRootPath}/mutations/`;
+    const fileName = `${mutationName}Mutation.spec.ts`;
+    const keepIfExists = true;
+    saveRenderedTemplate(templateName, context, filePath, fileName, keepIfExists);
+  };
+
+  if (module.mutations && module.mutations.length) {
+    shelljs.mkdir('-p', `${projectMainPath}/src/${graphqlFileRootPath}/mutations`);
+    module.mutations.forEach(({ name, hasArguments, variables }) => {
+      createMutation(name, hasArguments);
+      createMutationSpec(name, hasArguments);
+    });
+  }
+});
+
 
 const createTypeResolvers = () => {
-  modules.forEach(({ name, typeDefinitions, types, schemaString, queries, mutations }) => {
+  modules.forEach(({ name, typeDefinitions, types, schemaString, queries, mutations, graphqlFileRootPath }) => {
     let typeResolvers = [];
     if (types) {
       const federatedEntities = getFederatedEntities(schemaString);
       schemaString = schemaString.replace(/extend type/g, `type`);
       let source = new Source(schemaString);
       let schema = buildSchema(source);
-      shelljs.mkdir('-p', `${projectMainPath}/src/modules/${name}/graphql/types/`);
+      shelljs.mkdir('-p', `${projectMainPath}/src/${graphqlFileRootPath}/types/`);
       typeDefinitions.forEach((typeDef) => {
         let filtered = [];
         let type = schema.getType(typeDef.name);
@@ -189,24 +182,20 @@ const createTypeResolvers = () => {
           type = schema.getType(typeDef.name);
         }
         if (type.astNode) {
-          if (type.astNode.directives && !!type.astNode.directives.find((d) => d.name.value === 'entity')) {
             filtered = type.astNode.fields.filter(
               (f) =>
-                !f.directives.find(
+                f.directives.find(
                   (d) =>
-                    d.name.value === 'column' ||
-                    d.name.value === 'id' ||
-                    d.name.value === 'embedded' ||
-                    d.name.value === 'external'
+                    d.name.value === 'computed' ||
+                    d.name.value === 'link'
                 )
             );
-          } else {
-            filtered = type.astNode.fields.filter((f) => f.directives.find((d) => d.name.value === 'computed'));
-          }
         }
 
         if (federatedEntities.find((e) => e === typeDef.name)) {
-          filtered = filtered.concat(federatedEntities.map((e) => ({ name: { value: '__resolveReference' }, resolveReferenceType: true })));
+          filtered = filtered.concat(
+            federatedEntities.map((e) => ({ name: { value: '__resolveReference' }, resolveReferenceType: true }))
+          );
         }
 
         filtered.forEach(({ name: { value }, resolveReferenceType }) => {
@@ -219,7 +208,7 @@ const createTypeResolvers = () => {
             resolveReferenceType,
             capitalizedFieldName,
           };
-          const filePath = `${projectMainPath}/src/modules/${name}/graphql/types/`;
+          const filePath = `${projectMainPath}/src/${graphqlFileRootPath}/types/`;
           const fileName = `${typeDef.name}${capitalizedFieldName}.ts`;
           const keepIfExists = true;
 
@@ -237,7 +226,7 @@ const createTypeResolvers = () => {
             resolveReferenceType,
             capitalizedFieldName,
           };
-          const filePath = `${projectMainPath}/src/modules/${name}/graphql/types/`;
+          const filePath = `${projectMainPath}/src/${graphqlFileRootPath}/types/`;
           const fileName = `${typeDef.name}${capitalizedFieldName}.spec.ts`;
           const keepIfExists = true;
 
@@ -255,7 +244,7 @@ const createTypeResolvers = () => {
     const moduleName = name;
     const createModuleResolvers = () => {
       const templateName = './templates/moduleResolvers.handlebars';
-      const context = { moduleName, queries, mutations, typeResolvers };
+      const context = { moduleName, queries, mutations, typeResolvers, graphqlFileRootPath };
       const filePath = `${projectMainPath}/generated/graphql/`;
       const fileName = `${moduleName}Resolvers.ts`;
       saveRenderedTemplate(templateName, context, filePath, fileName);

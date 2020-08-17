@@ -1,7 +1,11 @@
 const path = require('path');
-module.exports = (fileList) => {
-  return fileList.map(({ name }) => {
-    const possibleModuleName = path.basename(name, '.graphql');
-    return { name: possibleModuleName, graphqlFilePath: name };
+module.exports = (fileList, projectMainPath) => {
+  return fileList.map((graphqlFilePath) => {
+    const possibleModuleName = path.basename(graphqlFilePath, '.graphql');
+    return {
+      name: possibleModuleName,
+      graphqlFilePath,
+      graphqlFileRootPath: graphqlFilePath.replace(`${projectMainPath}/src/`, '').replace(`${possibleModuleName}.graphql`, '')
+    };
   });
 };
