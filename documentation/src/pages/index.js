@@ -103,6 +103,26 @@ const ChimpLogo = (props) => (
   </svg>
 );
 
+const chimpFeatures = [
+  {
+    title: <>Quality First</>,
+    description: (
+      <>Chimp lets you focus on writing code that's relevant to your business. It will take care of everything else.</>
+    ),
+  },
+  {
+    title: <>Reduced Boilerplate</>,
+    description: (
+      <>Chimp lets you focus on writing code that's relevant to your business. It will take care of everything else.</>
+    ),
+  },
+  {
+    title: <>Modular</>,
+    description: (
+      <>Chimp lets you focus on writing code that's relevant to your business. It will take care of everything else.</>
+    ),
+  },
+];
 function Home() {
   const context = useDocusaurusContext();
   const { siteConfig = {} } = context;
@@ -112,6 +132,24 @@ function Home() {
         <div className="container">
           <ChimpLogo />
           <p className="hero__subtitle">{siteConfig.tagline}</p>
+        </div>
+      </header>
+      <main>
+        {chimpFeatures && chimpFeatures.length > 0 && (
+          <section className={styles.features}>
+            <div className="container">
+              <div className="row">
+                {chimpFeatures.map((props, idx) => (
+                  <Feature key={idx} {...props} />
+                ))}
+              </div>
+            </div>
+          </section>
+        )}
+      </main>
+      <header className={clsx('hero hero--primary', styles.heroBanner)}>
+        <div className="container">
+          <p className="hero__subtitle">Your GraphQL Scaffolder</p>
           <div className={styles.buttons}>
             <Link
               className={clsx('button button--outline button--secondary button--lg', styles.getStarted)}

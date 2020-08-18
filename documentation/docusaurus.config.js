@@ -1,6 +1,6 @@
 module.exports = {
   title: 'Chimp',
-  tagline: 'The GraphQL Server Generator',
+  tagline: 'Your Quality Faster Companion',
   url: 'https://your-docusaurus-test-site.com',
   baseUrl: '/',
   onBrokenLinks: 'throw',
