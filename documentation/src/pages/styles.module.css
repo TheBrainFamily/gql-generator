@@ -12,6 +12,14 @@
   overflow: hidden;
 }
 
+.subHeroBanner {
+  padding: 2rem 0;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  background-color: var(--ifm-color-primary-lighter);
+}
+
 @media screen and (max-width: 966px) {
   .heroBanner {
     padding: 2rem;

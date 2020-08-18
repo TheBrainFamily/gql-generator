@@ -6,23 +6,50 @@ import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import useBaseUrl from '@docusaurus/useBaseUrl';
 import styles from './styles.module.css';
 
-const features = [
+
+const chimpFeatures = [
   {
-    title: <>Focus on What Matters, Forget about Boilercode</>,
+    title: <>Quality at Speed</>,
     description: (
-      <>Chimp lets you focus on writing code that's relevant to your business. It will take care of everything else.</>
+      <>Chimp helps you write high quality code from the get-go. No more putting tests and quality as an after-thought.
+        Quality first, speed for free.</>
     ),
   },
   {
-    title: <>Test Driven Workflow. Made Easy</>,
+    title: <>Reduced Boilerplate</>,
+    description: (
+      <>Boilerplate is time consuming and Chimp aims to reduce that through various plugins.</>
+    ),
+  },
+  {
+    title: <>Everything is Modular</>,
+    description: (
+      <>Whether you're writing a data-driven or a domain-driven app.</>
+    ),
+  },
+];
+
+
+const features = [
+  {
+    title: <>No more excuses not to test GQL!</>,
+    description: (
+      <>Chimp encourages a test-driven workflow by creating tests based on your schema, and helping you stay on the straight and narrow.</>
+    ),
+  },
+  {
+    title: <>Fully Wired GQL Scaffolding</>,
     description: (
       <>
-        Chimp generates tests for you.
-        <br />
-        <ul>
-          <li>No more wondering how to approach GraphQL Testing.</li>
-          <li>No more excuses not to test.</li>
-        </ul>
+        Chimp's GQL scaffolding will generate and wire up types, resolvers, and tests, ready for you to write use-cases for your app.
+      </>
+    ),
+  },
+  {
+    title: <>Modular GQL</>,
+    description: (
+      <>
+        Per the <i>single responsibility</i> principle, every query, mutation and field resolver are isolated making them easy to maintain long-term.
       </>
     ),
   },
@@ -30,8 +57,7 @@ const features = [
     title: <>No lock-in</>,
     description: (
       <>
-        There are no runtime dependencies on chimp. Your project will be a pure Apollo/Express-based server. You are
-        able to walk away at any time. That also means it's easy for your existing project to take advantage of Chimp!
+        Use Chimp on new or existing projects, and walk away any time. There are no runtime dependencies as it uses a pure Apollo stack.
       </>
     ),
   },
@@ -39,26 +65,15 @@ const features = [
     title: <>Typed from the ground up</>,
     description: (
       <>
-        Chimp will connect generated types to your code in a minimalistic and beautiful way. We use the industry
-        standard GraphQL Code Generator to give you even more confidence that your code will work as you planned.
+        Chimp produces elegant and minimalistic typed resolvers using <i>graphql-code-generator</i> with smart defaults, which decreases cognitive load.
       </>
     ),
   },
   {
-    title: <>Apollo Federation Compatible - Enterprise ready!</>,
+    title: <>Enterprise ready w/ Federation</>,
     description: (
       <>
-        At any point you need to split your GraphQL layer into micrographs, you can seamlessly transition to Apollo
-        Federation.
-      </>
-    ),
-  },
-  {
-    title: <>Extremely Modular Code</>,
-    description: (
-      <>
-        Per the classic Single-responsibility Principle - Every single Query, Mutation and a field resolver is defined
-        in a separate file. It might seem weird at first, but once you try it, you will not look back.
+        As GQL projects grow they will likely need to be split into micrographs. With Chimp you can seamlessly transition to Apollo Federation.
       </>
     ),
   },
@@ -103,35 +118,17 @@ const ChimpLogo = (props) => (
   </svg>
 );
 
-const chimpFeatures = [
-  {
-    title: <>Quality First</>,
-    description: (
-      <>Chimp lets you focus on writing code that's relevant to your business. It will take care of everything else.</>
-    ),
-  },
-  {
-    title: <>Reduced Boilerplate</>,
-    description: (
-      <>Chimp lets you focus on writing code that's relevant to your business. It will take care of everything else.</>
-    ),
-  },
-  {
-    title: <>Modular</>,
-    description: (
-      <>Chimp lets you focus on writing code that's relevant to your business. It will take care of everything else.</>
-    ),
-  },
-];
+
 function Home() {
   const context = useDocusaurusContext();
   const { siteConfig = {} } = context;
   return (
-    <Layout title={`Hello from ${siteConfig.title}`} description="Description will go into a meta tag in <head />">
+    <Layout title={`${siteConfig.title}`} description="{siteConfig.tagline}">
       <header className={clsx('hero hero--primary', styles.heroBanner)}>
         <div className="container">
           <ChimpLogo />
           <p className="hero__subtitle">{siteConfig.tagline}</p>
+          <i>React, Apollo, DDD + ES/CQRS, BDD, TDD</i>
         </div>
       </header>
       <main>
@@ -147,15 +144,15 @@ function Home() {
           </section>
         )}
       </main>
-      <header className={clsx('hero hero--primary', styles.heroBanner)}>
+      <header className={clsx('hero hero--primary', styles.subHeroBanner)}>
         <div className="container">
-          <p className="hero__subtitle">Your GraphQL Scaffolder</p>
+          <p id="apollo-graphql" className="hero__subtitle"><b>Apollo GraphQL</b></p>
           <div className={styles.buttons}>
             <Link
               className={clsx('button button--outline button--secondary button--lg', styles.getStarted)}
               to={useBaseUrl('docs/')}
             >
-              Get Started
+              View Docs
             </Link>
           </div>
         </div>

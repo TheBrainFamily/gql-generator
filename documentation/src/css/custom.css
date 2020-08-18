@@ -7,14 +7,33 @@
 
 /* You can override the default Infima variables here. */
 :root {
-  --ifm-color-primary: #56BF98;
-  --ifm-color-primary-dark: rgb(33, 175, 144);
-  --ifm-color-primary-darker: rgb(31, 165, 136);
-  --ifm-color-primary-darkest: rgb(26, 136, 112);
-  --ifm-color-primary-light: rgb(70, 203, 174);
-  --ifm-color-primary-lighter: rgb(102, 212, 189);
-  --ifm-color-primary-lightest: rgb(146, 224, 208);
+  --ifm-color-primary: #56bf98;
+  --ifm-color-primary-dark: #44b58b;
+  --ifm-color-primary-darker: #41ab83;
+  --ifm-color-primary-darkest: #358d6c;
+  --ifm-color-primary-light: #6ac7a4;
+  --ifm-color-primary-lighter: #81D8B7;
+  --ifm-color-primary-lightest: #92d6bd;
+
+
   --ifm-code-font-size: 95%;
+}
+
+.footer--dark {
+  background-color: #3C3F3E;
+}
+
+.footer {
+  font-size: 14px;
+}
+
+.footer .text--center {
+  font-size: 12px;
+  font-style: italic;
+}
+
+.react-toggle-track {
+  border-radius: 5px !important;
 }
 
 .docusaurus-highlight-code-line {

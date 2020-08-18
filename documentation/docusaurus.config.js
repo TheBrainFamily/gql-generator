@@ -1,29 +1,29 @@
 module.exports = {
-  title: 'Chimp',
-  tagline: 'Your Quality Faster Companion',
-  url: 'https://your-docusaurus-test-site.com',
+  title: 'Chimp.js',
+  tagline: 'Tooling that helps you do quality, faster.',
+  url: 'https://www.chimpjs.com',
   baseUrl: '/',
   onBrokenLinks: 'throw',
-  favicon: 'img/favicon.ico',
+  favicon: 'favicon-96x96.png',
   organizationName: 'TheBrainFamily', // Usually your GitHub org/user name.
   projectName: 'chimp', // Usually your repo name.
   themeConfig: {
     navbar: {
-      title: 'Chimp',
+      title: 'chimp',
       logo: {
         alt: 'Chimp Logo',
-        src: 'img/logo.png',
+        src: 'img/logo.svg',
       },
       items: [
         {
-          to: 'docs/',
+          to: 'docs/quickstart',
           activeBasePath: 'docs',
           label: 'Docs',
           position: 'left',
         },
         { to: 'blog', label: 'Blog', position: 'left' },
         {
-          href: 'https://github.com/TheBrainFamily/chimp',
+          href: 'https://github.com/xolvio/chimp',
           label: 'GitHub',
           position: 'right',
         },
@@ -59,16 +59,16 @@ module.exports = {
           items: [
             {
               label: 'Blog',
-              to: 'blog',
+              href: 'https://www.xolv.io/blog',
             },
             {
               label: 'GitHub',
-              href: 'https://github.com/TheBrainFamily/chimp',
+              href: 'https://github.com/xolvio/chimp',
             },
           ],
         },
       ],
-      copyright: `Copyright © ${new Date().getFullYear()} Xolv.io. Built with Docusaurus.`,
+      copyright: `Copyright © ${new Date().getFullYear()} Xolv.io.`,
     },
   },
   presets: [
