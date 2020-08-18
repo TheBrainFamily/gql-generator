@@ -27,6 +27,10 @@ directive @extends on OBJECT
   .replace(
     "@union(discriminatorField: String)",
     "@union(discriminatorField: String, additionalFields: [AdditionalEntityFields])"
+  )
+  .replace(
+    "@graphqlator(embedded: Boolean)",
+    "@graphqlator(embedded: Boolean, additionalFields: [AdditionalEntityFields])"
   );
 
 const schema = importSchema(schemaString, {}, { out: "GraphQLSchema" });

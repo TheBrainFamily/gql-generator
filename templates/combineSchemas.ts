@@ -1,5 +1,4 @@
-import * as fs from "fs";
-import {  loadTypedefsSync } from "@graphql-tools/load";
+import {loadTypedefsSync} from "@graphql-tools/load";
 import {
   GraphQLFileLoader,
   GraphQLFileLoaderOptions,
@@ -11,10 +10,6 @@ import shelljs from "shelljs";
 const graphqlPaths = shelljs.ls(
   `${__dirname}/../../src/**/*.graphql`
 );
-
-let allSchemas = graphqlPaths
-  .concat(`${__dirname}/genericDataModelSchema.graphql`)
-
 
 class ExtendedGraphQLFileLoader extends GraphQLFileLoader {
   handleFileContent(
@@ -30,11 +25,34 @@ class ExtendedGraphQLFileLoader extends GraphQLFileLoader {
   }
 }
 
+const userSchema = loadTypedefsSync(graphqlPaths, {
+  loaders: [new ExtendedGraphQLFileLoader()],
+  assumeValidSDL: true, // this will bypass validation
+}).map((s) => { return s.document } )
+
+const frameworkTypes = loadTypedefsSync(`
+# Generated directives
+directive @entity(embedded: Boolean) on OBJECT
+directive @graphqlator(embedded: Boolean) on OBJECT
+
+directive @column(overrideType: String) on FIELD_DEFINITION
+
+directive @id on FIELD_DEFINITION
+directive @computed on FIELD_DEFINITION
+directive @link(overrideType: String) on FIELD_DEFINITION
+directive @embedded on FIELD_DEFINITION
+directive @map(path: String!) on FIELD_DEFINITION
+directive @union(discriminatorField: String) on UNION
+
+input AdditionalEntityFields {
+  path: String
+  type: String
+}
+
+`, {loaders: []}).map((s) => s.document)
+
 const schema = mergeTypeDefs(
-  loadTypedefsSync(allSchemas, {
-    loaders: [new ExtendedGraphQLFileLoader()],
-    assumeValidSDL: true, // this will bypass validation
-  }).map((s) => s.document)
+  userSchema.concat(frameworkTypes)
 );
 
 export default schema;

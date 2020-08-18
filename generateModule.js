@@ -187,7 +187,8 @@ const createTypeResolvers = () => {
                 f.directives.find(
                   (d) =>
                     d.name.value === 'computed' ||
-                    d.name.value === 'link'
+                    d.name.value === 'link' ||
+                    d.name.value === 'requires'
                 )
             );
         }
