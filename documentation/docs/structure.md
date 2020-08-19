@@ -17,11 +17,9 @@ A fresh project will consist of a following structure:
 └── src
     ├── context.ts
     ├── createApp.ts
+    ├── dataSources.ts
     ├── index.ts
     ├── root.ts
-    ├── graphql
-    │   ├── schema.graphql.skip
-    │   └── schema.ts
     └── modules
         └── RemoveMe
             └── graphql
@@ -31,6 +29,8 @@ A fresh project will consist of a following structure:
                     └── HelloQuery.ts
 ```
 
+It's advisable to initialize an app to look into specific files while reading this page, but you can also look here: (TODO)
+
 ## Top Level /
 
 ### Readme.md
@@ -39,9 +39,9 @@ Readme.md is a generic readme explaining basic operations and usage of the repo.
 
 ### codegen.js
 
-codegen.js is a configuration used by the graphql-code-generator to generate TypeScript definitions used by the project. Additionally, it provides Entity and Federation related directives to the generator.
+codegen.js is a configuration used by Chimp to generate TypeScript definitions used by the project. Additionally, it provides Entity and Federation related directives to the generator.
 
-It also maps all the types that you marked as entities to their respective DB based types.
+It also maps all the types to their respective data based types.
 This is crucial to understanding the assumptions that the generator uses to generate code and limit boilercode.
 Read more here - [Understanding Types](understanding-types.md)
 
@@ -99,32 +99,24 @@ By default, our context consists of three things:
 Exports a function that configures (but does not start!) Apollo Server.
 
 You will find there a basic cors configuration.
-Remember to remove our domains from there - they are left there as examples.
 
 Another important thing that happens here is the initialization of context with the passed root object.
+
+### dataSources.ts
+
+Sets up
 
 ### index.ts
 
 Starts up the server based on the app configured in createApp.ts
-It also logs out information about the started server
 
 ### root.ts
 
-Exports an object on which you can put anything you want (Controllers, Data Sources, Services, Repositories, Use Cases), that will later be accessible in the context object by your resolvers.
+Exports an object on which you can put anything you want (Controllers, Services, Repositories, Use Cases), that will later be accessible in the context object by your resolvers.
 
 By using the root object instead of importing things directly in the resolvers files you allow for injecting those dependencies in test.
 
 You might not need to use this file if your GraphQL server is only an aggregation layer using Apollo-based DataSources.
-
-## src/graphql/
-
-### schema.graphql
-
-If you need to add extra generic directives, do it here and change this file name to schema.graphql.
-
-### schema.ts
-
-Builds schema (combining .graphql definitions with resolvers) and exports it.
 
 ## Modules
 
@@ -142,10 +134,9 @@ modules
             └── HelloQuery.ts
 ```
 
-As you can notice there is a pre-defined pattern for you to follow.
-_In the future we might allow having the module pattern customizable, try to convince us :)_
+As you can notice we use a pattern you are welcome to follow.
 
-Every module has a name, that name needs to be reflected in the `module/Module_Name/graphql/Module_Name.graphql` file.
+Every module has a name, that name is reflected in the `module/Module_Name/graphql/Module_Name.graphql` file.
 
 Based on that file our generator will generate resolvers for Queries, Mutations, Fields, also spec files scaffolds for them.
 

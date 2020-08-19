@@ -53,7 +53,7 @@ for (const typeName in typeMap) {
 }
 
 
-module.exports = function({contextType} = {}) {
+module.exports = function({contextType,} = {}) {
   return {
     overwrite: true,
     schema: schemaString,
@@ -64,13 +64,13 @@ module.exports = function({contextType} = {}) {
           idFieldName: "id",
           objectIdType: "string",
           federation: true,
-          mappers,
+          mappers
         },
         plugins: [
           "typescript",
           "typescript-resolvers",
           "typescript-operations",
-          "graphqlator-codegen-plugin",
+          "chimp-graphql-codegen-plugin",
           {add: "export {GqlContext};"},
         ],
       },

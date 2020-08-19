@@ -5,6 +5,7 @@ import Link from '@docusaurus/Link';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import useBaseUrl from '@docusaurus/useBaseUrl';
 import styles from './styles.module.css';
+import {GraphqlLogo} from "./components/GraphqlLogo";
 
 
 const chimpFeatures = [
@@ -146,7 +147,8 @@ function Home() {
       </main>
       <header className={clsx('hero hero--primary', styles.subHeroBanner)}>
         <div className="container">
-          <p id="apollo-graphql" className="hero__subtitle"><b>Apollo GraphQL</b></p>
+          <GraphqlLogo/>
+          <p id="apollo-graphql" className="hero__subtitle"><b>Apollo GraphQL Companion</b></p>
           <div className={styles.buttons}>
             <Link
               className={clsx('button button--outline button--secondary button--lg', styles.getStarted)}

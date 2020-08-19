@@ -5,69 +5,34 @@ module.exports = {
   baseUrl: '/',
   onBrokenLinks: 'throw',
   favicon: 'favicon-96x96.png',
-  organizationName: 'TheBrainFamily', // Usually your GitHub org/user name.
+  organizationName: 'xolvio', // Usually your GitHub org/user name.
   projectName: 'chimp', // Usually your repo name.
   themeConfig: {
+    colorMode: {
+      defaultMode: 'light',
+      switchConfig: {
+        darkIcon: '◑',
+        darkIconStyle: {
+          color: '#ffffff'
+        },
+        lightIcon: '◑',
+        lightIconStyle: {
+          color: '#ffffff'
+        },
+      }
+    },
     navbar: {
-      title: 'chimp',
+      hideOnScroll: true,
+      title: '',
       logo: {
-        alt: 'Chimp Logo',
+        alt: 'Chimp.js Logo',
         src: 'img/logo.svg',
+        srcDark: 'img/logo-dark.svg',
       },
-      items: [
-        {
-          to: 'docs/quickstart',
-          activeBasePath: 'docs',
-          label: 'Docs',
-          position: 'left',
-        },
-        { to: 'blog', label: 'Blog', position: 'left' },
-        {
-          href: 'https://github.com/xolvio/chimp',
-          label: 'GitHub',
-          position: 'right',
-        },
-      ],
+      items: [],
     },
     footer: {
       style: 'dark',
-      links: [
-        {
-          title: 'Docs',
-          items: [
-            {
-              label: 'Intro',
-              to: 'docs/quickstart',
-            },
-          ],
-        },
-        {
-          title: 'Community',
-          items: [
-            {
-              label: 'Stack Overflow',
-              href: 'https://stackoverflow.com/questions/tagged/chimp',
-            },
-            {
-              label: 'Twitter',
-              href: 'https://twitter.com/xolvio',
-            },
-          ],
-        },
-        {
-          title: 'More',
-          items: [
-            {
-              label: 'Blog',
-              href: 'https://www.xolv.io/blog',
-            },
-            {
-              label: 'GitHub',
-              href: 'https://github.com/xolvio/chimp',
-            },
-          ],
-        },
-      ],
       copyright: `Copyright © ${new Date().getFullYear()} Xolv.io.`,
     },
   },
